@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { createContent } from 'projects/test-lib/src/lib/utils/content.utils'
+import { createContent } from './utils/content.utils'
 
 @Component({
   selector: 'lib-test-lib',
