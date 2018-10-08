@@ -1,5 +1,23 @@
 # Angular application containing bug
 
+## How this project was created
+
+```bash
+git init test-project.git
+cd test-project.git/
+npm install @angular/cli
+npx ng g new test-app
+cd test-app/
+npx ng g component test1 # just for testing
+npx ng generate library test-lib
+```
+
+Besides of that, only these things were done:
+
+* The TestLibModule was added to the AppModule
+* The Test1Component and the TestLibComponent where added to the app.component.html
+* The `createContent()` function of `content.utils.ts` was used in the TestLibComponent, so that it's included in the build
+
 ## Build steps to reproduce bug
 
 * install dependencies: `npm install`
