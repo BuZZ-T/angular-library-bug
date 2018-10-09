@@ -33,7 +33,7 @@ Besides of that, only these things were done:
 
 ### Source code where the bug takes place during the build steps
 
-#### test-app/projects/test-lib/src/lib/utils/data.utils.ts
+#### test-app/projects/test-lib/src/lib/utils/data.utils.ts ([link](test-app/projects/test-lib/src/lib/utils/data.utils.ts))
 ```ts
 import { getData } from './get.utils'
 
@@ -41,7 +41,7 @@ export const data = getData()
 ```
 Be aware that the return type of `getData() ` is not specified and will be added to the declaration file in the build
 
-#### test-app/projects/test-lib/src/lib/utils/get.utils.ts
+#### test-app/projects/test-lib/src/lib/utils/get.utils.ts ([link](test-app/projects/test-lib/src/lib/utils/get.utils.ts))
 ```ts
 export interface IData {
   name: string
@@ -54,7 +54,7 @@ export const getData = (): IData => ({
 })
 ```
 
-#### test-app/projects/test-lib/src/lib/test-lib.component.ts (snippet)
+#### test-app/projects/test-lib/src/lib/test-lib.component.ts (snippet) ([link](test-app/projects/test-lib/src/lib/test-lib.component.ts))
 ```ts
 import { data } from './utils/data.utils'
 
@@ -109,3 +109,28 @@ cp tsconfig.lib.json tsconfig.json
 ```ts
 export declare const data: import("projects/test-lib/src/lib/utils/get.utils").IData;
 ```
+
+## Workaround (which is not really applicable in larger projects)
+
+Explicitly declare the type of the variable
+
+### test-app/out-tsc/lib/lib/utils/workaround.utils.ts
+
+```ts
+import { getData, IData } from './get.utils'
+
+export const dataWorkaround:IData = getData()
+```
+
+which compiles to:
+```ts
+import { IData } from './get.utils';
+export declare const dataWorkaround: IData;
+```
+As `IData` is already known as explicitly imported, no inline import function has to be applied.
+**But**: This is not a applicable for the following reasons:
+
+* The "wrong" code is valid TypeScript and it's really unintuitive that it shouldn't be allowed
+* No tooling support (e.g. linting in IDE or via script)
+* Not even building the library reveals the error
+* Only when trying to use *every* place where the explicit import was forgotten, the error is noticed
