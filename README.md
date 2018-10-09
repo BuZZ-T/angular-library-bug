@@ -78,3 +78,18 @@ export declare const createContent: () => import("./IData").IData;
 ```
 
 so the path is valid after build, because it is relative to the file containing the declaration, not relative to the `baseUrl` and the folder structure of the **source folder**.
+
+## Further investigation
+
+On compiling with `tsc`, the same behaviour is observed:
+
+```bash
+cd test-app/projects/test-lib
+cp tsconfig.lib.json tsconfig.json
+../../../node_modules/.bin/tsc
+```
+### test-app/out-tsc/lib/lib/utils/content.utils.d.ts
+
+```ts
+export declare const createContent: () => import("projects/test-lib/src/lib/utils/IData").IData;
+```
