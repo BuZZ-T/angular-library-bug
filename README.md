@@ -16,7 +16,6 @@ Besides of that, only these things were done:
 
 * The TestLibModule was added to the AppModule
 * The Test1Component and the TestLibComponent where added to the app.component.html
-* The `createContent()` function of `content.utils.ts` was used in the TestLibComponent, so that it's included in the build
 
 ## Build steps to reproduce bug
 
@@ -25,7 +24,7 @@ Besides of that, only these things were done:
 
 ## Bug description
 
-* A function `getData` is imported and used
+* A function `getData()` is imported and used
 * The return value of this function is stored in a variable
 * The return type `IData` of this function is not explicitely declared for the variable but inferred
 * The return type of this function is non-primitive and is also defined in this project
@@ -34,17 +33,20 @@ Besides of that, only these things were done:
 
 ### Source code where the bug takes place during the build steps
 
-#### test-app/projects/test-lib/src/lib/utils/content.utils.ts
+#### test-app/projects/test-lib/src/lib/utils/data.utils.ts
 ```ts
 import { getData } from './get.utils'
 
-export const createContent = () => getData()
+export const data = getData()
 ```
 Be aware that the return type of `getData() ` is not specified and will be added to the declaration file in the build
 
 #### test-app/projects/test-lib/src/lib/utils/get.utils.ts
 ```ts
-import { IData } from './IData'
+export interface IData {
+  name: string
+  value: number
+}
 
 export const getData = (): IData => ({
   name: 'foo',
@@ -52,20 +54,27 @@ export const getData = (): IData => ({
 })
 ```
 
-#### test-app/projects/test-lib/src/lib/utils/IData.ts
+#### test-app/projects/test-lib/src/lib/test-lib.component.ts (snippet)
 ```ts
-export interface IData {
-  name: string
-  value: number
-}
+import { data } from './utils/data.utils'
+
+  ...
+
+  public text: string
+  
+  ...
+
+  constructor() {
+    this.text = `my data: ${data.name} / ${data.value}`
+  }
 ```
 
 ### created declaration files on build
 When running `ng build test-lib`, the following file is created (among others):
 
-#### test-app/dist/test-lib/lib/utils/content.utils.d.ts
+#### test-app/dist/test-lib/lib/utils/data.utils.d.ts
 ```ts
-export declare const createContent: () => import("projects/test-lib/src/lib/utils/IData").IData;
+export declare const data: import("projects/test-lib/src/lib/utils/get.utils").IData;
 ```
 
 As you can see, the path is relative to the `baseUrl` specified in the `tsconfig.app.json`
@@ -81,7 +90,7 @@ by adding a `baseUrl` to the `tsconfig.lib.json` of the angular library, this pa
 In my opinion, the correct path for the transitive import of `IData` would be:
 
 ```ts
-export declare const createContent: () => import("./IData").IData;
+export declare const data: import("./get.utils").IData;
 ```
 
 so the path is valid after build, because it is relative to the file containing the declaration, not relative to the `baseUrl` and the folder structure of the **source folder**.
@@ -95,8 +104,8 @@ cd test-app/projects/test-lib
 cp tsconfig.lib.json tsconfig.json
 ../../../node_modules/.bin/tsc
 ```
-### test-app/out-tsc/lib/lib/utils/content.utils.d.ts
+### test-app/out-tsc/lib/lib/utils/data.utils.d.ts
 
 ```ts
-export declare const createContent: () => import("projects/test-lib/src/lib/utils/IData").IData;
+export declare const data: import("projects/test-lib/src/lib/utils/get.utils").IData;
 ```

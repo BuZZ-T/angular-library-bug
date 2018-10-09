@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { createContent } from './utils/content.utils'
+import { data } from './utils/data.utils'
 
 @Component({
   selector: 'lib-test-lib',
   template: `
     <p>
-      test-lib (declared in library) works: {{text}}
+      test-lib (declared in library) works
     </p>
   `,
   styles: []
@@ -14,11 +14,10 @@ export class TestLibComponent implements OnInit {
 
   public text: string
 
-  constructor() { }
+  constructor() {
+    this.text = `my data: ${data.name} / ${data.value}`
+  }
 
   ngOnInit() {
-    const content = createContent()
-
-    this.text = `my content: ${content.name} / ${content.value}`
   }
 }
