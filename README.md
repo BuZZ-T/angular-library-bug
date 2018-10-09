@@ -25,6 +25,13 @@ Besides of that, only these things were done:
 
 ## Bug description
 
+* A function `getData` is imported and used
+* The return value of this function is stored in a variable
+* The return type `IData` of this function is not explicitely declared for the variable but inferred
+* The return type of this function is non-primitive and is also defined in this project
+* On compiling, the return type `IData` is added by typescript inline by pointing to the file where the interface is declared
+* The path to this file is relative to the baseUrl and points to the source file, which is not available after the build
+
 ### Source code where the bug takes place during the build steps
 
 #### test-app/projects/test-lib/src/lib/utils/content.utils.ts
